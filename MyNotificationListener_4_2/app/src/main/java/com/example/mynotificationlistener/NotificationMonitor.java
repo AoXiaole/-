@@ -2,6 +2,7 @@ package com.example.mynotificationlistener;
 
 import android.app.Notification;
 
+import android.content.Context;
 import android.content.Intent;
 
 import android.os.Bundle;
@@ -34,7 +35,7 @@ import java.util.regex.Pattern;
 public class NotificationMonitor extends NotificationListenerService {
 
     public static final String ACTION_DATA = "android.service.notification.NotificationListenerService";
-    private String PAY_URL = this.getString(R.string.pay_url);
+    private String PAY_URL = ""; //"http://www.longint.cn/api/onepay";//
     private static final int EVENT_NEW_MSG = 1;
     private Handler handler;
 
@@ -42,7 +43,7 @@ public class NotificationMonitor extends NotificationListenerService {
     public void onCreate(){
         super.onCreate();
         Log.v("NotificationMonitor","create");
-
+        PAY_URL = this.getString(R.string.pay_url);
         handler = new Handler(){
             @Override
             public void handleMessage(Message msg){
@@ -112,13 +113,13 @@ public class NotificationMonitor extends NotificationListenerService {
 
         if (matched){
 
-//            //发送广播 给UI，进行UI显示
-//            Intent intent = new Intent();
-//            intent.putExtra("title",title);
-//            intent.putExtra("msg",notificationText);
-//            intent.setAction(ACTION_DATA);
-//            sendBroadcast(intent);
-            
+            //发送广播 给UI，进行UI显示
+            Intent intent = new Intent();
+            intent.putExtra("title",title);
+            intent.putExtra("msg",notificationText);
+            intent.setAction(ACTION_DATA);
+            sendBroadcast(intent);
+
             // 发送消息给handle，进行http 上报
             String payinfo = payinfo2json(money, payType);
             Message message = Message.obtain(handler);
@@ -128,21 +129,6 @@ public class NotificationMonitor extends NotificationListenerService {
 
         }
 
-        if (true) // 所有通知栏消息都显示
-        {
-            //发送广播 给UI，进行UI显示
-            Intent intent = new Intent();
-            if(matched)
-            {
-                intent.putExtra("title", title + "(已匹配)");
-            }
-            else {
-                intent.putExtra("title", title);
-            }
-            intent.putExtra("msg",notificationText);
-            intent.setAction(ACTION_DATA);
-            sendBroadcast(intent);
-        }
 
     }
 
